@@ -32,8 +32,13 @@ router.post("/", auth, async (req, res) => {
     teacher: req.user.id,
   });
 
-  await newClass.save();
-  res.status(201).json({ message: "Class created successfully" });
+  try {
+    await newClass.save();
+    res.status(201).json({ message: "Class created successfully" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // Join a class (for students)
@@ -93,7 +98,10 @@ router.post(
 
       // Add the lecture to the class's lectures array
       const filePath = req.file.path;
-      classToUpload.lectures.push(filePath);
+      classToUpload.lectures.push({
+        path: filePath,
+        title: req.body.title || "Lecture",
+      });
       await classToUpload.save();
 
       res.json({ message: "Lecture uploaded successfully", filePath });

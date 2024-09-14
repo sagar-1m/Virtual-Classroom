@@ -1,11 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const http = require("http");
+const socketIo = require("socket.io");
 require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const classRoutes = require("./routes/classes");
-const http = require("http");
-const socketIo = require("socket.io");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -47,6 +47,9 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
   });
 });
+
+// Export io for use in controllers
+module.exports = { app, io };
 
 // Start the server
 server.listen(PORT, () => {

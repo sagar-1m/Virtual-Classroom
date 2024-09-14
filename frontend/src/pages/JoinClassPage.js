@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "../api/axios";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function JoinClassPage() {
   const [classId, setClassId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate(); // Updated to useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +14,7 @@ function JoinClassPage() {
     try {
       const response = await axios.put(`/classes/join/${classId}`);
       setMessage(response.data.message);
-      history.push("/dashboard"); // Redirect to the dashboard or another page after joining
+      navigate("/dashboard"); // Updated to use navigate
     } catch (err) {
       setError(
         err.response?.data?.message || "Error occurred while joining the class"

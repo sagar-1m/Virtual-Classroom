@@ -1,41 +1,34 @@
-// frontend/src/pages/DashBoardPage.js
+// src/pages/DashboardPage.js
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 
-const DashBoardPage = () => {
-  const [userData, setUserData] = useState(null);
-  const navigate = useNavigate();
+function DashboardPage() {
+  const [classes, setClasses] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login"); // Redirect to login if token is not present
-    } else {
-      // Fetch user data or class data
-      axios
-        .get("/auth/me", { headers: { Authorization: `Bearer ${token}` } })
-        .then((response) => {
-          setUserData(response.data); // Set user data
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          navigate("/login"); // Redirect to login if token is invalid
-        });
-    }
-  }, [navigate]);
-
-  if (!userData) {
-    return <p>Loading...</p>; // Show a loading message while fetching data
-  }
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get("/classes");
+        setClasses(response.data.classes);
+      } catch (err) {
+        setError("Error fetching classes");
+      }
+    };
+    fetchClasses();
+  }, []);
 
   return (
     <div>
-      <h2>Welcome, {userData.name}</h2>
-      <p>Role: {userData.role}</p>
-      {/* You can add more dashboard features here */}
+      <h2>Dashboard</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <ul>
+        {classes.map((classItem) => (
+          <li key={classItem.id}>{classItem.name}</li>
+        ))}
+      </ul>
     </div>
   );
-};
+}
 
-export default DashBoardPage;
+export default DashboardPage;
